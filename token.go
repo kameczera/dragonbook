@@ -6,8 +6,6 @@ const (
 	number TokenType = iota
 	plus
 	minus
-	mul
-	div
 	leftParen
 	rightParen
 	eof
