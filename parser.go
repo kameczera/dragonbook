@@ -5,22 +5,6 @@ import (
 	"strconv"
 )
 
-type Node interface {  }
-
-type Value struct {
-	value int
-}
-
-type Binary struct {
-	op Token
-	left Node
-	right Node
-}
-
-type AST struct {
-	root Node
-}
-
 type Parser struct {
 	tokens []Token
 	pos int
@@ -123,3 +107,47 @@ func printTree(currNode Node, indent string) {
 	}
 }
 
+type Visit func(currNode Node)
+
+func prefixVisit(currNode Node) {
+	switch n := currNode.(type) {
+		case Value:
+			fmt.Print(n.value)
+
+		case Binary:
+			fmt.Print(n.op.value)
+			prefixVisit(n.left)
+			prefixVisit(n.right)
+		default:
+			fmt.Print("Error")
+	}
+}
+
+func infixVisit(currNode Node) {
+	switch n := currNode.(type) {
+		case Value:
+			fmt.Print(n.value)
+
+		case Binary:
+			infixVisit(n.left)
+			fmt.Print(n.op.value)
+			infixVisit(n.right)
+		default:
+			fmt.Print("Error")
+	}
+	
+}
+
+func posfixVisit(currNode Node) {
+	switch n := currNode.(type) {
+		case Value:
+			fmt.Print(n.value)
+
+		case Binary:
+			posfixVisit(n.left)
+			posfixVisit(n.right)
+			fmt.Print(n.op.value)
+		default:
+			fmt.Print("Error")
+	}
+}
