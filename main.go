@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	input := "2 + 5 + 3 - 2 * 7"
+	input := "(2+5)+(3-22)*7"
 
 	lexer := getTokens(input)
 
