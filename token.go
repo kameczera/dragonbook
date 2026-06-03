@@ -10,6 +10,10 @@ const (
 	div
 	leftParen
 	rightParen
+	ifStmt
+	forStmt
+	id
+	equal
 	eof
 )
 

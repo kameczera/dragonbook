@@ -4,6 +4,11 @@ import (
 	"fmt"
 )
 
+var keywords = map[string]TokenType {
+	"if": ifStmt,
+	"for": forStmt,
+}
+
 type Lexer struct {
 	program string
 	pos int
@@ -37,8 +42,34 @@ func (l *Lexer) getNumber() Token {
 	}
 }
 
+func (l *Lexer) getKeyword() Token {
+	init := l.pos
+	for l.pos < len(l.program) && isAlpha(l.program[l.pos]) {
+		l.pos++
+	}
+	val, ok := keywords[l.program[init:l.pos]]
+	if ok == true {
+		return Token {
+			tokenType: val,
+			value: l.program[init:l.pos],
+		}
+	}
+
+	return Token {
+		tokenType: id,
+		value: l.program[init:l.pos],
+	}
+}
+
 func isNumeric(c byte) bool {
 	if c < '0' || c > '9' {
+		return false
+	}
+	return true
+}
+
+func isAlpha(c byte) bool {
+	if c < 'a' || c > 'z' || c < 'A' || c > 'Z' {
 		return false
 	}
 	return true
@@ -67,6 +98,9 @@ func (l *Lexer) getToken() Token {
 		default:
 			if isNumeric(l.program[l.pos]) {
 				return l.getNumber()
+			}
+			if isAlpha(l.program[l.pos]) {
+				return l.getKeyword();
 			}
 	}
 	panic("token not found")
