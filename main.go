@@ -19,5 +19,5 @@ func main() {
 	infixVisit(ast.root)
 	fmt.Println("\n")
 	posfixVisit(ast.root)	
-	
+	fmt.Println("\n\n")
 }
