@@ -38,9 +38,9 @@ func (i *Interpreter) walk(currNode Node) int {
 	}
 }
 
-func (i *Interpreter) interpret(ast AST) {
-	
-	result := i.walk(i.ast.root)
+func interpret(ast AST){
+	interpreter := Interpreter{ ast: ast }
+	result := interpreter.walk(ast.root)
 	fmt.Println(result)
 }
 

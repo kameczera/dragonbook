@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 )
-
+	
 var keywords = map[string]TokenType {
 	"if": ifStmt,
 	"for": forStmt,

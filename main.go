@@ -20,4 +20,5 @@ func main() {
 	fmt.Println("\n")
 	posfixVisit(ast.root)	
 	fmt.Println("\n\n")
+	interpret(ast)
 }
