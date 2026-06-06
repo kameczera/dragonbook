@@ -5,7 +5,7 @@ import (
 )
 
 func main() {
-	input := "2>5"
+	input := "(2<5) + 1 * 7 asdf * 2"
 
 	lexer := getTokens(input)
 
@@ -20,5 +20,5 @@ func main() {
 	// fmt.Println("\n")
 	// posfixVisit(ast.root)	
 	// fmt.Println("\n\n")
-	// interpret(ast)
+	interpret(ast)
 }

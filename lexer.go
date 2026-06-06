@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 	
-var keywords = map[string]TokenType {
+var words = map[string]TokenType {
 	"if": ifStmt,
 	"for": forStmt,
 }
@@ -41,12 +41,13 @@ func (l *Lexer) getNumber() Token {
 	}
 }
 
-func (l *Lexer) getKeyword() Token {
+func (l *Lexer) getWord() Token {
 	init := l.pos
 	for l.pos < len(l.program) && isAlpha(l.program[l.pos]) {
 		l.pos++
 	}
-	val, ok := keywords[l.program[init:l.pos]]
+
+	val, ok := words[l.program[init:l.pos]]
 	if ok == true {
 		return Token {
 			tokenType: val,
@@ -54,6 +55,8 @@ func (l *Lexer) getKeyword() Token {
 		}
 	}
 
+	words[l.program[init:l.pos]] = id
+	fmt.Println(l.program[init:l.pos])
 	return Token {
 		tokenType: id,
 		value: l.program[init:l.pos],
@@ -68,10 +71,8 @@ func isNumeric(c byte) bool {
 }
 
 func isAlpha(c byte) bool {
-	if c < 'a' || c > 'z' || c < 'A' || c > 'Z' {
-		return false
-	}
-	return true
+	return (c >= 'a' && c <= 'z') ||
+		(c >= 'A' && c <= 'Z')
 }
 
 func (l *Lexer) peek() (byte, bool) {
@@ -132,7 +133,7 @@ func (l *Lexer) getToken() Token {
 				return l.getNumber()
 			}
 			if isAlpha(l.program[l.pos]) {
-				return l.getKeyword();
+				return l.getWord();
 			}
 	}
 	panic("token not found")
