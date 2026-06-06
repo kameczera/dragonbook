@@ -8,7 +8,6 @@ var keywords = map[string]TokenType {
 	"if": ifStmt,
 	"for": forStmt,
 }
-
 type Lexer struct {
 	program string
 	pos int
@@ -75,6 +74,14 @@ func isAlpha(c byte) bool {
 	return true
 }
 
+func (l *Lexer) peek() (byte, bool) {
+	if l.pos < len(l.program) {
+		return l.program[l.pos], true
+	}
+
+	return 0, false
+}
+
 func (l *Lexer) getToken() Token {
 	switch l.program[l.pos] {
 		case '+':
@@ -89,6 +96,31 @@ func (l *Lexer) getToken() Token {
 		case '/':
 			l.pos++
 			return Token{tokenType: div, value: "/"}
+		case '>':
+			l.pos++
+			ch, ok := l.peek()
+			if ok {
+				switch ch {
+					case '=':
+						l.pos++
+						return Token{ tokenType: greaterEqual, value: ">=" }
+					default:
+						return Token{ tokenType: greater, value: ">" }
+				}
+			}
+			fmt.Println("erro")
+		case '<':
+			l.pos++
+			ch, ok := l.peek()
+			if ok {
+				switch ch {
+					case '=':
+						l.pos++
+						return Token{ tokenType: lessEqual, value: ">=" }
+					default:
+						return Token{ tokenType: less, value: ">" }
+				}
+			}
 		case '(':
 			l.pos++
 			return Token{tokenType: leftParen, value: "("}

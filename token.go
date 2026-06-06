@@ -8,6 +8,10 @@ const (
 	minus
 	mul
 	div
+	greater
+	less
+	greaterEqual
+	lessEqual
 	leftParen
 	rightParen
 	ifStmt

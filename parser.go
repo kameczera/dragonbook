@@ -37,22 +37,6 @@ func createTree(tokens []Token) AST {
 	return AST { root: parser.expr() }
 }
 
-func (p *Parser) term() Node {
-	left := p.factor()
-
-	for matchTokenType(p.current(), mul, div) {
-		op := p.advance()
-		right := p.factor()
-
-		left = Binary{
-			op:    op,
-			left:  left,
-			right: right,
-		}
-	}
-	return left
-}
-
 func (p *Parser) expr() Node {
 	left := p.term()
 
@@ -63,6 +47,38 @@ func (p *Parser) expr() Node {
 		left = Binary{
 			op:    op,
 			left:  left,
+			right: right,
+		}
+	}
+	return left
+}
+
+func (p *Parser) term() Node {
+	left := p.rel()
+
+	for matchTokenType(p.current(), mul, div) {
+		op := p.advance()
+		right := p.factor()
+
+		left = Binary{
+			op: op,
+			left: left,
+			right: right,
+		}
+	}
+	return left
+}
+
+func (p *Parser) rel() Node {
+	left := p.factor()
+
+	for matchTokenType(p.current(), greater, greaterEqual, less, lessEqual) {
+		op := p.advance()
+		right := p.factor()
+
+		left = Binary {
+			left: left,
+			op: op,
 			right: right,
 		}
 	}

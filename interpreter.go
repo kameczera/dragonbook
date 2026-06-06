@@ -22,6 +22,31 @@ func (i *Interpreter) interpretOp(n Binary) int {
 			return left * right
 		case div:
 			return left / right
+		case greater: {
+			if left > right {
+				return 1
+			} else {
+				return 0	
+			}
+		}
+		case greaterEqual:
+			if left >= right {
+				return 1
+			} else {
+				return 0
+			}
+		case less:
+			if left < right {
+				return 1
+			} else {
+				return 0
+			}
+		case lessEqual:
+			if left <= right {
+				return 1
+			} else {
+				return 0
+			}
 		default:
 			panic("operador desconhecido")
 	}
