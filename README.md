@@ -51,3 +51,4 @@ More specifically, I followed the **DCC888** course.
 ### To do
 
 - [ ] Predictive parsing
+- [ ] Type Theory 🙄​
