@@ -70,7 +70,7 @@ func (p *Parser) term() Node {
 }
 
 func (p *Parser) rel() Node {
-	left := p.factor()
+	left := p.initialize()
 
 	for matchTokenType(p.current(), greater, greaterEqual, less, lessEqual) {
 		op := p.advance()
@@ -85,6 +85,22 @@ func (p *Parser) rel() Node {
 	return left
 }
 
+func (p *Parser) initialize() Node {
+	right := p.factor()
+
+	for matchTokenType(p.current(), equal) {
+		op := p.advance()
+		left := p.factor()
+
+		right = Binary {
+			left: left,
+			op: op,
+			right: right,
+		}
+	}
+	return right
+}
+
 func (p *Parser) factor() Node {
 	token := p.advance()
 	var node Node
@@ -93,7 +109,9 @@ func (p *Parser) factor() Node {
 		if err != nil {
 			panic("numero invalido: " + token.value)
 		}
-		node = Value { value: value }
+		node = Number { value: value }
+	} else if matchTokenType(token, id) {
+		node = Variable { identifier: token.value }
 	} else if matchTokenType(token, leftParen) {
 		node = p.expr()
 
@@ -101,7 +119,6 @@ func (p *Parser) factor() Node {
 			panic("esperado ')'")
 		}
 		p.advance()
-		return node
 	} else {
 		panic("token posicao invalida")
 	}
@@ -111,9 +128,10 @@ func (p *Parser) factor() Node {
 
 func printTree(currNode Node, indent string) {
 	switch n := currNode.(type) {
-		case Value:
-			fmt.Println(indent + "Value: ", n.value)
-
+		case Number:
+			fmt.Println(indent + "Number: ", n.value)
+		case Variable:
+			fmt.Println(indent + "Variable: ", n.identifier)
 		case Binary:
 			fmt.Println(indent + "Binary: ", n.op.value)
 			printTree(n.left, indent + "   ")
@@ -127,7 +145,7 @@ type Visit func(currNode Node)
 
 func prefixVisit(currNode Node) {
 	switch n := currNode.(type) {
-		case Value:
+		case Number:
 			fmt.Print(n.value)
 
 		case Binary:
@@ -141,7 +159,7 @@ func prefixVisit(currNode Node) {
 
 func infixVisit(currNode Node) {
 	switch n := currNode.(type) {
-		case Value:
+		case Number:
 			fmt.Print(n.value)
 
 		case Binary:
@@ -156,7 +174,7 @@ func infixVisit(currNode Node) {
 
 func posfixVisit(currNode Node) {
 	switch n := currNode.(type) {
-		case Value:
+		case Number:
 			fmt.Print(n.value)
 
 		case Binary:

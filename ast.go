@@ -2,8 +2,18 @@ package main
 
 type Node interface {  }
 
-type Value struct {
+type varType int
+
+const (
+	Integer varType = iota
+)
+
+type Number struct {
 	value int
+}
+
+type Variable struct {
+	identifier string
 }
 
 type Binary struct {

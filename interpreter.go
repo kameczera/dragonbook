@@ -4,6 +4,8 @@ import (
 	"fmt"
 )
 
+var variables = make(map[string]int)
+
 type Interpreter struct {
 	ast AST 
 }
@@ -47,6 +49,8 @@ func (i *Interpreter) interpretOp(n Binary) int {
 			} else {
 				return 0
 			}
+		case equal:
+			return right
 		default:
 			panic("operador desconhecido")
 	}
@@ -54,10 +58,12 @@ func (i *Interpreter) interpretOp(n Binary) int {
 
 func (i *Interpreter) walk(currNode Node) int {
 	switch n := currNode.(type) {
-		case Value:
+		case Number:
 			return n.value
 		case Binary:
 			return i.interpretOp(n)
+		case Variable:
+			return variables[n.identifier]
 		default:
 			panic("nó desconhecido")
 	}

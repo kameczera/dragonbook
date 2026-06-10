@@ -128,6 +128,9 @@ func (l *Lexer) getToken() Token {
 		case ')':
 			l.pos++
 			return Token{tokenType: rightParen, value: ")"}
+		case '=':
+			l.pos++
+			return Token{tokenType: equal, value:"="}
 		default:
 			if isNumeric(l.program[l.pos]) {
 				return l.getNumber()
