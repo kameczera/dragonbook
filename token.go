@@ -18,6 +18,7 @@ const (
 	forStmt
 	id
 	equal
+	semicolon
 	eof
 )
 

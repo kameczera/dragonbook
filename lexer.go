@@ -43,7 +43,7 @@ func (l *Lexer) getNumber() Token {
 
 func (l *Lexer) getWord() Token {
 	init := l.pos
-	for l.pos < len(l.program) && isAlpha(l.program[l.pos]) {
+	for l.pos < len(l.program) && isAlphaNumeric(l.program[l.pos]) {
 		l.pos++
 	}
 
@@ -73,6 +73,10 @@ func isNumeric(c byte) bool {
 func isAlpha(c byte) bool {
 	return (c >= 'a' && c <= 'z') ||
 		(c >= 'A' && c <= 'Z')
+}
+
+func isAlphaNumeric(c byte) bool {
+	return isAlpha(c) || isNumeric(c)
 }
 
 func (l *Lexer) peek() (byte, bool) {
@@ -131,6 +135,9 @@ func (l *Lexer) getToken() Token {
 		case '=':
 			l.pos++
 			return Token{tokenType: equal, value:"="}
+		case ';':
+			l.pos++
+			return Token{tokenType: semicolon, value: ";"}
 		default:
 			if isNumeric(l.program[l.pos]) {
 				return l.getNumber()

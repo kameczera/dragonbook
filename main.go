@@ -6,7 +6,7 @@ import (
 
 func main() {
 	// input := "(2<5) + 1 * 7"
-	input := "abc = 123"
+	input := "abc = 122 print(abv)"
 	lexer := getTokens(input)
 
 	lexer.printTokens()

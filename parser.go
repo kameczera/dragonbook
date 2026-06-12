@@ -65,7 +65,8 @@ func (p *Parser) term() Node {
 			left: left,
 			right: right,
 		}
-	}
+	} 
+
 	return left
 }
 
@@ -75,7 +76,9 @@ func (p *Parser) rel() Node {
 	for matchTokenType(p.current(), greater, greaterEqual, less, lessEqual) {
 		op := p.advance()
 		right := p.factor()
-
+		if !matchTokenType(p.current(), semicolon) {
+			panic("esperado um ';'")
+		}
 		left = Binary {
 			left: left,
 			op: op,
