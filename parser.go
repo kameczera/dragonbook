@@ -6,6 +6,7 @@ import (
 )
 
 type Parser struct {
+	statements []Node
 	tokens []Token
 	pos int
 }
@@ -32,9 +33,13 @@ func matchTokenType(token Token, types ...TokenType) bool {
 	return false
 }
 
-func createTree(tokens []Token) AST {
+func createTrees(tokens []Token) []AST {
 	parser := Parser{ tokens: tokens }
-	return AST { root: parser.expr() }
+	asts := []AST{}
+	for parser.pos < len(parser.tokens) {
+		asts = append(asts, AST { root: parser.expr() })
+	}
+	return asts
 }
 
 func (p *Parser) expr() Node {
@@ -71,14 +76,11 @@ func (p *Parser) term() Node {
 }
 
 func (p *Parser) rel() Node {
-	left := p.initialize()
+	left := p.assign()
 
 	for matchTokenType(p.current(), greater, greaterEqual, less, lessEqual) {
 		op := p.advance()
 		right := p.factor()
-		if !matchTokenType(p.current(), semicolon) {
-			panic("esperado um ';'")
-		}
 		left = Binary {
 			left: left,
 			op: op,
@@ -88,20 +90,26 @@ func (p *Parser) rel() Node {
 	return left
 }
 
-func (p *Parser) initialize() Node {
-	right := p.factor()
+func (p *Parser) assign() Node {
+	variable := p.factor()
 
-	for matchTokenType(p.current(), equal) {
-		op := p.advance()
-		left := p.factor()
-
-		right = Binary {
-			left: left,
-			op: op,
-			right: right,
+	for matchTokenType(p.current(),equal) {
+		p.advance()
+		v, ok := variable.(Variable)
+		if !ok {
+			panic(fmt.Sprintf("esperado uma variable, mas encontrou um %T", variable))
+		}
+		value := p.expr()
+		semic := p.advance()
+		if !matchTokenType(semic, semicolon) {
+			panic(fmt.Sprintf("esperado uma ';', mas encontrou um %s", semic.value))
+		}
+		variable = Assign {
+			variable: v,
+			value: value,
 		}
 	}
-	return right
+	return variable
 }
 
 func (p *Parser) factor() Node {
@@ -118,10 +126,19 @@ func (p *Parser) factor() Node {
 	} else if matchTokenType(token, leftParen) {
 		node = p.expr()
 
-		if !matchTokenType(p.current(), rightParen) {
+		if !matchTokenType(p.advance(), rightParen) {
 			panic("esperado ')'")
 		}
-		p.advance()
+	
+	} else if matchTokenType(token, printStmt) {
+		if !matchTokenType(p.advance(), leftParen) {
+			panic("esperado '('")
+		}
+		node = p.expr()
+		if !matchTokenType(p.advance(), rightParen) {
+			panic("esperado ')'")
+		}
+		node = Print { value: node }
 	} else {
 		panic("token posicao invalida")
 	}
@@ -135,10 +152,16 @@ func printTree(currNode Node, indent string) {
 			fmt.Println(indent + "Number: ", n.value)
 		case Variable:
 			fmt.Println(indent + "Variable: ", n.identifier)
+		case Assign:
+			fmt.Println(indent + "Assign: ", n.variable)
+			printTree(n.value, indent + "   ")
 		case Binary:
 			fmt.Println(indent + "Binary: ", n.op.value)
 			printTree(n.left, indent + "   ")
 			printTree(n.right, indent + "   ")
+		case Print:
+			fmt.Println(indent + "Print: ")
+			printTree(n.value, indent + "   ")
 		default:
 			fmt.Println("Error")
 	}
@@ -169,6 +192,10 @@ func infixVisit(currNode Node) {
 			infixVisit(n.left)
 			fmt.Print(n.op.value)
 			infixVisit(n.right)
+		case Variable:
+			fmt.Print(n.identifier)
+		case Assign:
+			
 		default:
 			fmt.Print("Error")
 	}

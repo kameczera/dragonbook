@@ -6,13 +6,16 @@ import (
 
 func main() {
 	// input := "(2<5) + 1 * 7"
-	input := "abc = 122 print(abv)"
+	input := "abc = 122;print(abc)"
 	lexer := getTokens(input)
 
 	lexer.printTokens()
-	ast := createTree(lexer.tokens)
-	fmt.Println("\nast:")
-	printTree(ast.root, "")
+	asts := createTrees(lexer.tokens)
+	for _, ast := range asts {
+		fmt.Println("\nast:")
+		printTree(ast.root, "")
+		interpret(ast)
+	}
 	// fmt.Println("\n")
 	// prefixVisit(ast.root)
 	// fmt.Println("\n")
@@ -20,5 +23,4 @@ func main() {
 	// fmt.Println("\n")
 	// posfixVisit(ast.root)	
 	// fmt.Println("\n\n")
-	interpret(ast)
 }

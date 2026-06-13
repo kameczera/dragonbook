@@ -22,6 +22,15 @@ type Binary struct {
 	right Node
 }
 
+type Assign struct {
+	variable Variable
+	value Node
+}
+
+type Print struct {
+	value Node
+}
+
 type AST struct {
 	root Node
 }

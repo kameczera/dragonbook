@@ -7,6 +7,7 @@ import (
 var words = map[string]TokenType {
 	"if": ifStmt,
 	"for": forStmt,
+	"print": printStmt,
 }
 type Lexer struct {
 	program string

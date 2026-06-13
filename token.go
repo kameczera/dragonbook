@@ -16,6 +16,7 @@ const (
 	rightParen
 	ifStmt
 	forStmt
+	printStmt
 	id
 	equal
 	semicolon

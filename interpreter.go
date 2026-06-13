@@ -64,6 +64,14 @@ func (i *Interpreter) walk(currNode Node) int {
 			return i.interpretOp(n)
 		case Variable:
 			return variables[n.identifier]
+		case Assign:
+			value := i.walk(n.value)
+			variables[n.variable.identifier] = value
+			return 1
+		case Print:
+			value := i.walk(n.value)
+			fmt.Println(value)
+			return 0
 		default:
 			panic("nó desconhecido")
 	}
@@ -71,7 +79,6 @@ func (i *Interpreter) walk(currNode Node) int {
 
 func interpret(ast AST){
 	interpreter := Interpreter{ ast: ast }
-	result := interpreter.walk(ast.root)
-	fmt.Println(result)
+	interpreter.walk(ast.root)
 }
 
