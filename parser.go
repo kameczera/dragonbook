@@ -37,9 +37,19 @@ func createTrees(tokens []Token) []AST {
 	parser := Parser{ tokens: tokens }
 	asts := []AST{}
 	for parser.pos < len(parser.tokens) {
-		asts = append(asts, AST { root: parser.expr() })
+		asts = append(asts, AST { root: parser.statement() })
 	}
 	return asts
+}
+
+func (p *Parser) statement() Node {
+	node := p.expr()
+
+	semic := p.advance()
+	if !matchTokenType(semic, semicolon) {
+		panic(fmt.Sprintf("esperado uma ';', mas encontrou um %s", semic.value))
+	}
+	return node
 }
 
 func (p *Parser) expr() Node {
@@ -50,8 +60,8 @@ func (p *Parser) expr() Node {
 		right := p.term()
 
 		left = Binary{
-			op:    op,
-			left:  left,
+			op: op,
+			left: left,
 			right: right,
 		}
 	}
@@ -93,17 +103,13 @@ func (p *Parser) rel() Node {
 func (p *Parser) assign() Node {
 	variable := p.factor()
 
-	for matchTokenType(p.current(),equal) {
+	for matchTokenType(p.current(), equal) {
 		p.advance()
 		v, ok := variable.(Variable)
 		if !ok {
 			panic(fmt.Sprintf("esperado uma variable, mas encontrou um %T", variable))
 		}
 		value := p.expr()
-		semic := p.advance()
-		if !matchTokenType(semic, semicolon) {
-			panic(fmt.Sprintf("esperado uma ';', mas encontrou um %s", semic.value))
-		}
 		variable = Assign {
 			variable: v,
 			value: value,
