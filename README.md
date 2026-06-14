@@ -41,12 +41,14 @@ More specifically, I followed the **DCC888** course.
 ### Completed
 
 - [x] Left Recursion
+- [x] Print
 
 ### Incomplete
 
 - [ ] Create a lexer for simple math operations
 - [ ] Create a top-down parser for simple math operations
 - [ ] Create an interpreter for simple math operations
+- [ ] Statements
 
 ### To do
 
